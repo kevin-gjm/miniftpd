@@ -10,6 +10,8 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <sys/select.h>
+#include <pwd.h>
+#include <uuid/uuid.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -24,5 +26,9 @@
         }                                       \
         while(0)
 
+
+#define MAX_COMMAND_LINE 1024
+#define MAX_COMMAND 32
+#define MAX_ARG 1024
 
 #endif  /* _COMMON_H_ */
