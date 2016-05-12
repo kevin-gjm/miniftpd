@@ -104,7 +104,7 @@ int write_timeout(int fd,unsigned int wait_seconds)
                 FD_ZERO(&write_fdset);
                 FD_SET(fd,&write_fdset);
 
-                timeout.tv_sec = timeout;
+                timeout.tv_sec = wait_seconds;
                 timeout.tv_usec = 0;
 
                 do
@@ -188,7 +188,7 @@ int connect_timeout(int fd,struct sockaddr_in *addr,unsigned int wait_seconds)
         socklen_t addrlen = sizeof(struct sockaddr_in);
 
         if(wait_seconds > 0)
-                activate_nonblock activate_nonblock(fd);
+                activate_nonblock(fd);
         ret = connect(fd, (struct sockaddr*)addr, addrlen);
         //返回0的情况一般是本地连接,其他情况EINPROGRESS一定会被设置
         if(ret < 0 && errno == EINPROGRESS )
@@ -281,7 +281,7 @@ ssize_t readn(int fd, void *buf,size_t count)
   成功返回count,失败返回-1
 */
 
-ssize_t writen(int fd,const char *buf,size_t count)
+ssize_t writen(int fd,const void *buf,size_t count)
 {
         size_t nleft = count;
         ssize_t nwritten;
@@ -424,7 +424,7 @@ int recv_fd(const int sockfd)
         msg.msg_iovlen = 1;
         msg.msg_flags = 0;
         msg.msg_control = cmsgbuf;
-        msg.msg_controllen = dizeof(cmsgbuf);
+        msg.msg_controllen = sizeof(cmsgbuf);
 
         p_cmsg = CMSG_FIRSTHDR(&msg);
         if(p_cmsg == NULL)

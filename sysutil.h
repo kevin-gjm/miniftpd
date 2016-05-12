@@ -1,6 +1,7 @@
 #ifndef _SYS_UTIL_H_
 #define _SYS_UTIL_H_
 
+#include "common.h"
 #define ERR_EXIT(m)                             \
         do                                      \
         {                                       \
