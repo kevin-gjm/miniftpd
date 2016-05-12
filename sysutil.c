@@ -187,7 +187,7 @@ int write_timeout(int fd,unsigned int wait_seconds)
   成功(未超时)返回已连接的套接字，超时返回-1并且errno = ETIMEDOUT
 */
 
-int accept_time(int fd,struct sockaddr_in *addr,unsigned int wait_seconds)
+int accept_timeout(int fd,struct sockaddr_in *addr,unsigned int wait_seconds)
 {
         int ret;
 
