@@ -1,6 +1,17 @@
 #ifndef _SYS_UTIL_H_
 #define _SYS_UTIL_H_
 
+#define ERR_EXIT(m)                             \
+        do                                      \
+        {                                       \
+                perror(m);                      \
+                exit(EXIT_FAILURE);             \
+        }                                       \
+        while(0)
+
+
+
+
 int getlocalip(char* ip);
 
 void activate_nonblock(int fd);
