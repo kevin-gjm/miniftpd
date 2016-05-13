@@ -6,3 +6,4 @@
 *.o
 G*
 miniftpd
+.DS_Store
