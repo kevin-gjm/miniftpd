@@ -75,6 +75,7 @@ static void do_pass(session_t *sess)
                 ftp_reply(sess,FTP_LOGINERR , "Login incorrect");
                 return ;
         }
+	//nobody 进程不能访问影子文件
         struct spwd *sp = getspnam(pw->pw_name);
         if(sp == NULL)
         {
@@ -84,13 +85,28 @@ static void do_pass(session_t *sess)
 
         //对明文密码进行加密
         char * encrypted_pass = crypt(sess->arg,sp->sp_pwdp);
-        if(strcmp(encrypted_pass,sp->pwdp) != 0)
+        if(strcmp(encrypted_pass,sp->sp_pwdp) != 0)
         {
                 ftp_reply(sess, FTP_LOGINERR, "Login incorrect");
                 return ;
         }
 
         ftp_reply(sess,FTP_LOGINOK,"Login successful");
+        /* 更改顺序有讲究,不能倒置，倒置后可能没有权限更改gid */
+        if(setegid(pw->pw_gid) < 0)
+        {
+                ERR_EXIT("do_pass:setegid");
+        }
+        if(seteuid(pw->pw_uid) < 0)
+        {
+                ERR_EXIT("do_pass:seteuid");
+        }
+	if(chdir(pw->pw_dir) < 0)
+	  {
+	    ERR_EXIT("do_pass:chdir");
+	  }
+
+
 }
 void ftp_reply(session_t *sess, int status,const char *text)
 {

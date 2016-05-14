@@ -11,8 +11,9 @@
 #include <fcntl.h>
 #include <sys/select.h>
 #include <pwd.h>
-#include <uuid/uuid.h>
+//#include <uuid/uuid.h>
 #include <shadow.h>
+#include <crypt.h>
 
 #include <stdlib.h>
 #include <stdio.h>
