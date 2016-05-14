@@ -26,20 +26,20 @@ void begin_session(session_t *sess)
 
                 //nobody进程
 
-        /* 将父进程改为nobody进程 */
+                /* 将父进程改为nobody进程 */
 
-        struct passwd *pw =  getpwnam("nobody");
-        if(pw == NULL)
-                return ;
-        /* 更改顺序有讲究,不能倒置，倒置后可能没有权限更改gid */
-        if(setegid(pw->pw_gid) < 0)
-        {
-                ERR_EXIT("begin_session:setegid");
-        }
-        if(seteuid(pw->pw_uid) < 0)
-        {
-                ERR_EXIT("begin_session:seteuid");
-        }
+                struct passwd *pw =  getpwnam("nobody");
+                if(pw == NULL)
+                        return ;
+                /* 更改顺序有讲究,不能倒置，倒置后可能没有权限更改gid */
+                if(setegid(pw->pw_gid) < 0)
+                {
+                        ERR_EXIT("begin_session:setegid");
+                }
+                if(seteuid(pw->pw_uid) < 0)
+                {
+                        ERR_EXIT("begin_session:seteuid");
+                }
 
                 close(sockfds[1]);
                 sess->parent_fd = sockfds[0];

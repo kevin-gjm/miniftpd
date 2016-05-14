@@ -75,7 +75,7 @@ static void do_pass(session_t *sess)
                 ftp_reply(sess,FTP_LOGINERR , "Login incorrect");
                 return ;
         }
-	//nobody 进程不能访问影子文件
+        //nobody 进程不能访问影子文件
         struct spwd *sp = getspnam(pw->pw_name);
         if(sp == NULL)
         {
@@ -101,10 +101,10 @@ static void do_pass(session_t *sess)
         {
                 ERR_EXIT("do_pass:seteuid");
         }
-	if(chdir(pw->pw_dir) < 0)
-	  {
-	    ERR_EXIT("do_pass:chdir");
-	  }
+        if(chdir(pw->pw_dir) < 0)
+        {
+                ERR_EXIT("do_pass:chdir");
+        }
 
 
 }
