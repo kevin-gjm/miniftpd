@@ -2,13 +2,19 @@
 #include "common.h"
 #include "sysutil.h"
 #include "str.h"
+#include "ftpcodes.h"
+
+void ftp_reply(session_t *sess,int status,const char *text);
+static void do_user(session_t *sess);
+static void do_pass(session_t *sess);
 
 void handle_child(session_t *sess)
 {
         int ret;
         /* 欢迎信息 */
         //当有用户连接成功后,返回220信息
-        writen(sess->ctrl_fd, "220 miniftpd 0.1\r\n", strlen( "220 miniftpd 0.1\r\n"));
+        //writen(sess->ctrl_fd, "220 miniftpd 0.1\r\n", strlen( "220 miniftpd 0.1\r\n"));
+        ftp_reply(sess, FTP_GREET, "miniftpd 0.1");
         while(1)
         {
                 memset(sess->cmdline,0,sizeof(sess->cmdline));
@@ -28,14 +34,68 @@ void handle_child(session_t *sess)
                 //del the \r\n
                 //printf("before:%s:after\n",sess->cmdline);
                 str_trim_crlf(sess->cmdline);
-                //printf("cmdline=[%s]\n",sess->cmdline);
+                printf("cmdline=[%s]\n",sess->cmdline);
                 str_split(sess->cmdline,sess->cmd,sess->arg,' ');
-                //printf("cmd=[%s]\n",sess->cmd);
-                //printf("arg=[%s]\n", sess->arg);
+                printf("cmd=[%s]\n",sess->cmd);
+                printf("arg=[%s]\n", sess->arg);
 
                 //将命令转换为大写
                 str_upper(sess->cmd);
+                if(strcmp("USER",sess->cmd) == 0)
+                {
+                        do_user(sess);
+                }else if(strcmp("PASS", sess->cmd) == 0)
+                {
+                        do_pass(sess);
+                }
 
 
         }
+}
+
+static void do_user(session_t *sess)
+{
+        struct passwd *pw = getpwnam(sess->arg);
+        if(pw == NULL)
+        {
+                //用户不存在
+                ftp_reply(sess,FTP_LOGINERR , "Login incorrect");
+                return ;
+        }
+        sess->uid = pw->pw_uid;
+
+        ftp_reply(sess, FTP_GIVEPWORD, "Please specify the password.");
+}
+static void do_pass(session_t *sess)
+{
+        struct passwd *pw = getpwuid(sess->uid);
+        if(pw == NULL)
+        {
+                //用户不存在
+                ftp_reply(sess,FTP_LOGINERR , "Login incorrect");
+                return ;
+        }
+        struct spwd *sp = getspnam(pw->pw_name);
+        if(sp == NULL)
+        {
+                ftp_reply(sess, FTP_LOGINERR, "Login incorrect");
+                return ;
+        }
+
+        //对明文密码进行加密
+        char * encrypted_pass = crypt(sess->arg,sp->sp_pwdp);
+        if(strcmp(encrypted_pass,sp->pwdp) != 0)
+        {
+                ftp_reply(sess, FTP_LOGINERR, "Login incorrect");
+                return ;
+        }
+
+        ftp_reply(sess,FTP_LOGINOK,"Login successful");
+}
+void ftp_reply(session_t *sess, int status,const char *text)
+{
+        char buf[1024] = {0};
+        sprintf(buf, "%d %s\r\n",status,text);
+        writen(sess->ctrl_fd,buf,strlen(buf));
+
 }

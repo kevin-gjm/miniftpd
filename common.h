@@ -12,6 +12,7 @@
 #include <sys/select.h>
 #include <pwd.h>
 #include <uuid/uuid.h>
+#include <shadow.h>
 
 #include <stdlib.h>
 #include <stdio.h>

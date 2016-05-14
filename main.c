@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
         pid_t pid;
         session_t sess =
                 {
+                        0,
                         /* 控制连接  */
                         -1,"","","",
                         /* 父子进程通道 */
