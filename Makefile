@@ -2,7 +2,7 @@
 CC=gcc
 CFLAGS=-Wall -g
 BIN=miniftpd
-OBJS=main.o sysutil.o session.o privparent.o ftpproto.o str.o
+OBJS=main.o sysutil.o session.o privparent.o ftpproto.o str.o parseconf.o tunable.o
 $(BIN):$(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 %.o:%.c
