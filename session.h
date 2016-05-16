@@ -14,6 +14,8 @@ typedef struct session
 //父子进程通道
         int parent_fd;
         int child_fd;
+        //FTP协议状态
+        int is_ascii;
 
 }session_t;
 

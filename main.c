@@ -46,6 +46,8 @@ int main(int argc, char *argv[])
                         -1,"","","",
                         /* 父子进程通道 */
                         -1,-1,
+                        /* FTP协议状态 */
+                        0
                 };
 
         while(1)
