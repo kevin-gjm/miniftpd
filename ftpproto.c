@@ -4,8 +4,12 @@
 #include "str.h"
 #include "ftpcodes.h"
 
+//标准格式:520 XXXXXX.\r\n
 void ftp_reply(session_t *sess,int status,const char *text);
-
+//多行模式:211-XXXX:\r\n
+void ftp_lreply(session_t *sess, int status,const char *text);
+//文本形式:XXXXX\r\n
+void ftp_treply(session_t *sess,const char* text);
 //使用命令映射机制
 static void do_user(session_t *sess);
 static void do_pass(session_t *sess);
@@ -96,10 +100,24 @@ static struct ftp_cmd_t
                 /* 不需要空表项{NULL,NULL},以另一种结束方式表示  */
         };
 
+void ftp_lreply(session_t *sess, int status,const char *text)
+{
+        char buf[1024] = {0};
+        sprintf(buf, "%d-%s\r\n",status,text);
+        writen(sess->ctrl_fd,buf,strlen(buf));
+
+}
 void ftp_reply(session_t *sess, int status,const char *text)
 {
         char buf[1024] = {0};
         sprintf(buf, "%d %s\r\n",status,text);
+        writen(sess->ctrl_fd,buf,strlen(buf));
+
+}
+void ftp_treply(session_t *sess,const char* text)
+{
+        char buf[1024] = {0};
+        sprintf(buf, "%s\r\n",text);
         writen(sess->ctrl_fd,buf,strlen(buf));
 
 }
@@ -241,7 +259,14 @@ static void do_list(session_t *sess){}
 static void do_nlst(session_t *sess){}
 static void do_rest(session_t *sess){}
 static void do_abor(session_t *sess){}
-static void do_pwd(session_t *sess){}
+static void do_pwd(session_t *sess)
+{
+        char text[2048] = {0};
+        char dir[1024+1] = {0};
+        getcwd(dir, 1024);
+        sprintf(text, "\"%s\"",dir);
+        ftp_reply(sess,FTP_PWDOK,text);
+}
 static void do_mkd(session_t *sess){}
 static void do_rmd(session_t *sess){}
 static void do_dele(session_t *sess){}
@@ -251,8 +276,35 @@ static void do_site(session_t *sess){}
 /* static void do_site_help(session_t* sess,char* arg){} */
 /* static void do_site_umask(session_t* sess,char* arg){} */
 /* static void do_site_chmod(session_t* sess,char* arg){} */
-static void do_syst(session_t *sess){}
-static void do_feat(session_t *sess){}
+static void do_syst(session_t *sess)
+{
+        ftp_reply(sess,FTP_SYSTOK,"UNIX Type: L8.");
+}
+static void do_feat(session_t *sess)
+{
+        //211-Features:
+        //EPRT
+        //EPSV
+        //MDTM
+        //PASV
+        //REST STREAM
+        //SIZE
+        //TVFS
+        //UTF8
+        //211 END
+        ftp_lreply(sess,FTP_FEAT, "Features:");
+        ftp_treply(sess, " ERPT");
+        ftp_treply(sess, " EPSV");
+        ftp_treply(sess, " MDTM");
+        ftp_treply(sess, " PASV");
+        ftp_treply(sess, " REST STREAM");
+        ftp_treply(sess, " SIZE");
+        ftp_treply(sess, " TVFS");
+        ftp_treply(sess, " UTF8");
+        ftp_reply(sess, FTP_FEAT, "End");
+
+
+}
 static void do_size(session_t *sess){}
 static void do_stat(session_t *sess){}
 static void do_noop(session_t *sess){}
