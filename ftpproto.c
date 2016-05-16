@@ -261,7 +261,7 @@ static void do_type(session_t *sess)
                 ftp_reply(sess, FTP_TYPEOK, "Switching to Binary mode.");
         }else
         {
-                ftp_reply(sess,FTP_BADCMD,"Unrecognised TYPE command.")
+                ftp_reply(sess,FTP_BADCMD,"Unrecognised TYPE command.");
         }
 }
 static void do_stru(session_t *sess){}
