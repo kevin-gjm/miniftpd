@@ -31,9 +31,9 @@ static void do_dele(session_t *sess);
 static void do_rnfr(session_t *sess);
 static void do_rnto(session_t *sess);
 static void do_site(session_t *sess);
-static void do_site_help(session_t* sess,char* arg);
-static void do_site_umask(session_t* sess,char* arg);
-static void do_site_chmod(session_t* sess,char* arg);
+/* static void do_site_help(session_t* sess,char* arg); */
+/* static void do_site_umask(session_t* sess,char* arg); */
+/* static void do_site_chmod(session_t* sess,char* arg); */
 static void do_syst(session_t *sess);
 static void do_feat(session_t *sess);
 static void do_size(session_t *sess);
@@ -248,9 +248,9 @@ static void do_dele(session_t *sess){}
 static void do_rnfr(session_t *sess){}
 static void do_rnto(session_t *sess){}
 static void do_site(session_t *sess){}
-static void do_site_help(session_t* sess,char* arg){}
-static void do_site_umask(session_t* sess,char* arg){}
-static void do_site_chmod(session_t* sess,char* arg){}
+/* static void do_site_help(session_t* sess,char* arg){} */
+/* static void do_site_umask(session_t* sess,char* arg){} */
+/* static void do_site_chmod(session_t* sess,char* arg){} */
 static void do_syst(session_t *sess){}
 static void do_feat(session_t *sess){}
 static void do_size(session_t *sess){}
